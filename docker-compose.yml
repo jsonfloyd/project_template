@@ -1,0 +1,25 @@
+version: '3'
+services:
+
+  &db-host db:
+    image: postgres:11.6-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: &db-password root
+      POSTGRES_USER: &db-user root
+      POSTGRES_DB: &db-db database
+
+  &app-host app:
+    build:
+      context: ./docker/app
+    environment:
+      DB_HOST: *db-host
+      DB_USER: *db-user
+      DB_PASSWORD: *db-password
+      DB_DATABSE: *db-db
+      APP_URL: "localhost"
+    depends_on:
+      - db
+      - redis
+  &redis-host redis:
+    image: redis:5.0.7-alpine
