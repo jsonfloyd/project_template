@@ -1,23 +1,35 @@
 FROM php:7.4.0-fpm-alpine
 
-RUN apk add --no-cache bash supervisor nginx
+### BUILD DEPTHS ###
+RUN apk add --virtual build-dependencies
+### RUNTIME DEPTHS ###
+RUN apk add --no-cache bash supervisor nginx curl
+ADD https://github.com/kelseyhightower/confd/releases/download/v0.16.0/confd-0.16.0-linux-amd64 /usr/local/bin/confd
+ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
+### PHP EXTENSIONS
+RUN chmod +x /usr/local/bin/confd && \
+    chmod uga+x /usr/local/bin/install-php-extensions
+
+RUN install-php-extensions gd xdebug
+
 
 RUN mkdir -p /opt/confd/bin && \
     mkdir -p /var/lib/nginx && \
     mkdir -p /var/lib/nginx/tmp && \
     mkdir -p /run/nginx
 
-RUN nginx -V
-ADD https://github.com/kelseyhightower/confd/releases/download/v0.16.0/confd-0.16.0-linux-amd64 /usr/local/bin/confd
 
 
 
-COPY ./etc/supervisor.conf /etc/supervisor/conf.d/supervisord.conf
-COPY ./etc/confd /etc/confd
-COPY ./etc/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY ./docker/app/etc/supervisor.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./docker/app/etc/confd /etc/confd
+COPY ./docker/app/etc/entrypoint.sh /usr/local/bin/entrypoint.sh
 
-RUN chmod +x /usr/local/bin/confd && \
-    chmod +x /usr/local/bin/entrypoint.sh
 
 COPY ./src/app /app
+
+HEALTHCHECK --interval=5m --timeout=3s \
+  CMD curl -f http://localhost/ || exit 1
+
+
 ENTRYPOINT sh /usr/local/bin/entrypoint.sh
