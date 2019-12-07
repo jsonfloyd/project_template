@@ -5,12 +5,8 @@ RUN apk add --virtual build-dependencies
 ### RUNTIME DEPTHS ###
 RUN apk add --no-cache bash supervisor nginx curl
 ADD https://github.com/kelseyhightower/confd/releases/download/v0.16.0/confd-0.16.0-linux-amd64 /usr/local/bin/confd
-ADD https://raw.githubusercontent.com/mlocati/docker-php-extension-installer/master/install-php-extensions /usr/local/bin/
 ### PHP EXTENSIONS
-RUN chmod +x /usr/local/bin/confd && \
-    chmod uga+x /usr/local/bin/install-php-extensions
-
-RUN install-php-extensions gd xdebug
+RUN chmod +x /usr/local/bin/confd
 
 
 RUN mkdir -p /opt/confd/bin && \
