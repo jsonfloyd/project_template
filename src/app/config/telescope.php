@@ -5,6 +5,13 @@ use Laravel\Telescope\Watchers;
 
 return [
 
+
+    /**
+     * Define developers info to
+     */
+    'developers' => [
+        'domain' => 'example.org',
+    ],
     /*
     |--------------------------------------------------------------------------
     | Telescope Domain
@@ -16,7 +23,7 @@ return [
     |
     */
 
-    'domain' => env('TELESCOPE_DOMAIN', null),
+    'domain' => env('TELESCOPE_DOMAIN', 'debug.' . env('APP_URL')),
 
     /*
     |--------------------------------------------------------------------------
@@ -29,7 +36,7 @@ return [
     |
     */
 
-    'path' => env('TELESCOPE_PATH', 'telescope'),
+    'path' => env('TELESCOPE_PATH', '/'),
 
     /*
     |--------------------------------------------------------------------------

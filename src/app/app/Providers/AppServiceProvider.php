@@ -25,8 +25,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Redis::enableEvents();
-        if ($this->app->isLocal()) {
-            $this->app->register(TelescopeServiceProvider::class);
-        }
     }
 }
